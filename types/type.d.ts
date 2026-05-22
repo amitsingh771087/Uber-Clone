@@ -1,6 +1,6 @@
 import { TextInputProps, TouchableOpacityProps } from "react-native";
 
-declare interface Driver {
+export interface Driver {
   driver_id: number;
   first_name: string;
   last_name: string;
@@ -10,7 +10,7 @@ declare interface Driver {
   rating: number;
 }
 
-declare interface MarkerData {
+export interface MarkerData {
   latitude: number;
   longitude: number;
   id: number;
@@ -25,7 +25,7 @@ declare interface MarkerData {
   price?: string;
 }
 
-declare interface MapProps {
+export interface MapProps {
   destinationLatitude?: number;
   destinationLongitude?: number;
   onDriverTimesCalculated?: (driversWithTimes: MarkerData[]) => void;
@@ -33,7 +33,7 @@ declare interface MapProps {
   onMapReady?: () => void;
 }
 
-declare interface Ride {
+export interface Ride {
   origin_address: string;
   destination_address: string;
   origin_latitude: number;
@@ -53,7 +53,7 @@ declare interface Ride {
   };
 }
 
-declare interface ButtonProps extends TouchableOpacityProps {
+export interface ButtonProps extends TouchableOpacityProps {
   title: string;
   bgVariant?: "primary" | "secondary" | "danger" | "outline" | "success";
   textVariant?: "primary" | "default" | "secondary" | "danger" | "success";
@@ -62,7 +62,7 @@ declare interface ButtonProps extends TouchableOpacityProps {
   className?: string;
 }
 
-declare interface GoogleInputProps {
+export interface GoogleInputProps {
   icon?: string;
   initialLocation?: string;
   containerStyle?: string;
@@ -78,7 +78,7 @@ declare interface GoogleInputProps {
   }) => void;
 }
 
-declare interface InputFieldProps extends TextInputProps {
+export interface InputFieldProps extends TextInputProps {
   label: string;
   icon?: any;
   secureTextEntry?: boolean;
@@ -89,7 +89,7 @@ declare interface InputFieldProps extends TextInputProps {
   className?: string;
 }
 
-declare interface PaymentProps {
+export interface PaymentProps {
   fullName: string;
   email: string;
   amount: string;
@@ -97,7 +97,7 @@ declare interface PaymentProps {
   rideTime: number;
 }
 
-declare interface LocationStore {
+export interface LocationStore {
   userLatitude: number | null;
   userLongitude: number | null;
   userAddress: string | null;
@@ -124,7 +124,7 @@ declare interface LocationStore {
   }) => void;
 }
 
-declare interface DriverStore {
+export interface DriverStore {
   drivers: MarkerData[];
   selectedDriver: number | null;
   setSelectedDriver: (driverId: number) => void;
@@ -132,7 +132,7 @@ declare interface DriverStore {
   clearSelectedDriver: () => void;
 }
 
-declare interface DriverCardProps {
+export interface DriverCardProps {
   item: MarkerData;
   selected: number;
   setSelected: () => void;

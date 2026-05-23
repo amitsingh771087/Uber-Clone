@@ -137,3 +137,11 @@ export interface DriverCardProps {
   selected: number;
   setSelected: () => void;
 }
+
+export type VerificationState = "default" | "pending" | "success" | "failed";
+
+export interface VerificationProps {
+  state: VerificationState;
+  error: string;
+  code?: string;
+}

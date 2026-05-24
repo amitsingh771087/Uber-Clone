@@ -2,6 +2,7 @@ import CustomButton from "@/components/CustomButton";
 import InputField from "@/components/InputField";
 import OAuth from "@/components/OAuth";
 import { icons, images } from "@/constants";
+import { fetchAPI } from "@/lib/fetch";
 import { VerificationProps } from "@/types/type";
 import { useSignUp } from "@clerk/expo";
 import { Link, useRouter } from "expo-router";
@@ -14,6 +15,7 @@ const SignUp = () => {
   const router = useRouter();
 
   const [showSuccessModel, setShowSuccessModel] = useState(false);
+  const [isVerifying, setIsVerifying] = useState(false);
 
   const [form, setForm] = useState({
     name: "",
@@ -31,8 +33,18 @@ const SignUp = () => {
 
   const onSignUpPress = async () => {
     try {
+      const name = form.name.trim();
+      const email = form.email.trim().toLowerCase();
+
+      if (!name || !email || !form.password) {
+        Alert.alert("Missing Details", "Please fill out all sign up fields.");
+        return;
+      }
+
+      console.log("[sign-up] Creating Clerk user:", { name, email });
+
       const { error } = await signUp.password({
-        emailAddress: form.email,
+        emailAddress: email,
         password: form.password,
       });
 
@@ -49,6 +61,7 @@ const SignUp = () => {
       }
 
       await signUp.verifications.sendEmailCode();
+      console.log("[sign-up] Verification code sent:", { email });
 
       setVerification({
         state: "pending",
@@ -65,9 +78,31 @@ const SignUp = () => {
   };
 
   const handleVerify = async () => {
+    if (isVerifying) return;
+
+    const name = form.name.trim();
+    const email = form.email.trim().toLowerCase();
+    const code = verification.code?.trim();
+
+    if (!name || !email) {
+      Alert.alert("Missing Details", "Name and email are required.");
+      return;
+    }
+
+    if (!code) {
+      setVerification((prev) => ({
+        ...prev,
+        state: "failed",
+        error: "Please enter the verification code.",
+      }));
+      return;
+    }
+
+    setIsVerifying(true);
+
     try {
       const { error } = await signUp.verifications.verifyEmailCode({
-        code: verification.code as string,
+        code,
       });
 
       if (error) {
@@ -80,27 +115,39 @@ const SignUp = () => {
         return;
       }
 
-      // close verification modal
+      if (!signUp.createdUserId) {
+        Alert.alert("Error", "User ID not created after verification");
+        return;
+      }
+
+      const payload = {
+        name,
+        email,
+        clerk_id: signUp.createdUserId,
+      };
+
+      await fetchAPI("/(api)/user", {
+        method: "POST",
+        body: JSON.stringify(payload),
+      });
+
       setVerification({
-        state: "default",
+        state: "success",
         error: "",
         code: "",
       });
-
-      // open success modal after verification modal fully closes
-      setTimeout(() => {
-        setShowSuccessModel(true);
-      }, 500);
-
-      console.log("Success modal opened");
     } catch (err: any) {
-      console.log(err);
+      console.error("[sign-up] Verify error:", err);
 
       setVerification((prev) => ({
         ...prev,
         state: "failed",
-        error: err?.errors?.[0]?.longMessage || "Verification failed",
+        error:
+          err?.message ??
+          "Verification succeeded, but creating your profile failed.",
       }));
+    } finally {
+      setIsVerifying(false);
     }
   };
 
@@ -162,10 +209,17 @@ const SignUp = () => {
 
         {/* Verification Modal */}
         <ReactNativeModal
-          isVisible={verification.state === "pending"}
+          isVisible={
+            verification.state === "pending" || verification.state === "failed"
+          }
           onModalHide={() => {
             if (verification.state === "success") {
               setShowSuccessModel(true);
+              setVerification({
+                state: "default",
+                error: "",
+                code: "",
+              });
             }
           }}
         >
@@ -196,9 +250,10 @@ const SignUp = () => {
             ) : null}
 
             <CustomButton
-              title="Verify Email"
+              title={isVerifying ? "Verifying..." : "Verify Email"}
               onPress={handleVerify}
               className="mt-5 bg-success-500"
+              disabled={isVerifying}
             />
           </View>
         </ReactNativeModal>
@@ -229,11 +284,9 @@ const SignUp = () => {
                     navigate: async () => {},
                   });
 
-                  setTimeout(() => {
-                    router.push("/(root)/(tabs)/home");
-                  }, 300);
+                  router.replace("/(root)/(tabs)/home");
                 } catch (err) {
-                  console.log(err);
+                  console.error("[sign-up] Finalize error:", err);
                   Alert.alert("Error", "Failed to login");
                 }
               }}

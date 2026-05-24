@@ -1,43 +1,52 @@
-import { icons } from "@/constants";
 import { Tabs } from "expo-router";
 import { Image, ImageSourcePropType, View } from "react-native";
 
+import { icons } from "@/constants";
+
 const TabIcon = ({
   source,
-  color,
   focused,
 }: {
   source: ImageSourcePropType;
-  color: string;
   focused: boolean;
 }) => (
-  <View className="items-center justify-center">
-    <Image
-      source={source}
-      resizeMode="contain"
-      tintColor={color}
-      className={focused ? "h-7 w-7" : "h-6 w-6"}
-    />
+  <View
+    className={`flex flex-row justify-center items-center rounded-full ${focused ? "bg-general-300" : ""}`}
+  >
+    <View
+      className={`rounded-full w-12 h-12 items-center justify-center ${focused ? "bg-general-400" : ""}`}
+    >
+      <Image
+        source={source}
+        tintColor="white"
+        resizeMode="contain"
+        className="w-7 h-7"
+      />
+    </View>
   </View>
 );
 
-export default function TabsLayout() {
+export default function Layout() {
   return (
     <Tabs
+      initialRouteName="home"
       screenOptions={{
-        headerShown: false,
-        tabBarActiveTintColor: "#0286FF",
-        tabBarInactiveTintColor: "#8E8E93",
+        tabBarActiveTintColor: "white",
+        tabBarInactiveTintColor: "white",
+        tabBarShowLabel: false,
         tabBarStyle: {
-          backgroundColor: "white",
-          borderTopWidth: 0,
+          backgroundColor: "#333333",
+          borderRadius: 50,
+          paddingBottom: 25, // ios only
+          overflow: "hidden",
+          marginHorizontal: 20,
+          marginBottom: 20,
           height: 78,
-          paddingBottom: 18,
-          paddingTop: 8,
-        },
-        tabBarLabelStyle: {
-          fontFamily: "Jakarta-SemiBold",
-          fontSize: 12,
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "center",
+          flexDirection: "row",
+          position: "absolute",
         },
       }}
     >
@@ -45,8 +54,9 @@ export default function TabsLayout() {
         name="home"
         options={{
           title: "Home",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon source={icons.home} color={color} focused={focused} />
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon source={icons.home} focused={focused} />
           ),
         }}
       />
@@ -54,8 +64,9 @@ export default function TabsLayout() {
         name="rides"
         options={{
           title: "Rides",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon source={icons.list} color={color} focused={focused} />
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon source={icons.list} focused={focused} />
           ),
         }}
       />
@@ -63,8 +74,9 @@ export default function TabsLayout() {
         name="chat"
         options={{
           title: "Chat",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon source={icons.chat} color={color} focused={focused} />
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon source={icons.chat} focused={focused} />
           ),
         }}
       />
@@ -72,8 +84,9 @@ export default function TabsLayout() {
         name="profile"
         options={{
           title: "Profile",
-          tabBarIcon: ({ color, focused }) => (
-            <TabIcon source={icons.profile} color={color} focused={focused} />
+          headerShown: false,
+          tabBarIcon: ({ focused }) => (
+            <TabIcon source={icons.profile} focused={focused} />
           ),
         }}
       />

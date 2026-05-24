@@ -1,13 +1,14 @@
 import { Show, useClerk, useUser } from "@clerk/expo";
 import { Link } from "expo-router";
-import { Pressable, StyleSheet, Text, View } from "react-native";
+import { Pressable, StyleSheet, Text } from "react-native";
+import { SafeAreaView } from "react-native-safe-area-context";
 
 export default function Home() {
   const { user } = useUser();
   const { signOut } = useClerk();
 
   return (
-    <View style={styles.container}>
+    <SafeAreaView style={styles.container}>
       <Text style={styles.title}>Welcome!</Text>
       <Show when="signed-out">
         <Link href="/(auth)/sign-in">
@@ -23,7 +24,7 @@ export default function Home() {
           <Text style={styles.buttonText}>Sign out</Text>
         </Pressable>
       </Show>
-    </View>
+    </SafeAreaView>
   );
 }
 

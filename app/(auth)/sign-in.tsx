@@ -134,7 +134,7 @@ const SignIn = () => {
             href="/(auth)/sign-up"
             className="text-lg text-center text-general-200 mt-10"
           >
-            <Text>Don't Have An Account? </Text>
+            <Text>{"Don't Have An Account? "}</Text>
             <Text className="text-primary-500">Sign Up</Text>
           </Link>
         </View>
